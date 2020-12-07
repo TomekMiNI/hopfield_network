@@ -1,12 +1,15 @@
-def HopfieldNetwork:
+class HopfieldNetwork:
     Z = [] #patterns
     w = [] #wagi
     M :int #liczba elementow w warstwie posredniej
     N :int #rozmiar wejścia/neuronu
 
-    def __init__(self, n, m)
+    def __init__(self, n, m):
         self.N = n
         self.M = m
+        self.w = [[]] * self.N
+        for i in range(self.N):
+            self.w[i] = [0] * self.N
         
 
     def corelation(x, y):
@@ -29,15 +32,16 @@ def HopfieldNetwork:
     #input-patterns
     def createPatterns2(self, inputs):
         #j patterns
-        Z = [] * self.M
+        self.Z = [[]] * self.M
         for j in range(self.M):
-            Z[j] = [inputs[j][i] for i in range(self.N)]
+            rr = range(self.N)
+            self.Z[j] = [inputs[j][i] for i in range(self.N)]
 
     #reguła Hebba 
     def updateWeights(self):
         for i in range(self.M):
             for j in range(self.M):
-                w[i, j] = 1/self.N * self.corelation(Z[i], Z[j])
+                self.w[i, j] = 1/self.N * self.corelation(self.Z[i], self.Z[j])
 
                 
 
@@ -47,46 +51,35 @@ def HopfieldNetwork:
         for m in range(self.M):
             for i in range(self.N):
                 for j in range(self.N):
-                    w[i, j] = 1/self.N * Z[m][i] * Z[m][j]
-
-    def updateWeights_mod1(self):
-        #100???
-        for u in range(100):
+                    self.w[i][j] = 1/self.N * self.Z[m][i] * self.Z[m][j]
 
 
     def activFun(self, val):
         return self.ownSign(val)
 
     def ownSign(self, val):
-        if val >= 0:
+        if val > 0:
             return 1
         return -1
 
     def calculateNewZ(self):
-        newZ = [] * self.M
+        newZ = [[]] * self.M
         #foreach pattern
         for n in range(self.M):
-            newZ = [] * self.N
+            newZ[n] = [0] * self.N
             #foreach elem in pattern
             for i in range(self.N):
                 arg = 0
                 for j in range(self.N):
-                    arg += w[i, j] * Z[n][i]
+                    arg += self.w[i][j] * self.Z[n][i]
                 newZ[n][i] = self.activFun(arg)
-        Z = newZ
-                
-
-    def calculateOutput(self):
-        for j in range(self.M):
-            newZ = [] * self.N
-            for i in range(self.N):
-                
+        self.Z = newZ
 
 
-    def train(self, inputs):
+    def train(self, inputs, iter):
         self.createPatterns2(inputs)
         #while True: #until some eps...
-        for _ in range(1000):
+        for _ in range(iter):
             self.updateWeights2()
             self.calculateNewZ()
         
