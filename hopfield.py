@@ -1,3 +1,5 @@
+import numpy as np
+
 class HopfieldNetwork:
     Z = [] #patterns
     w = [] #wagi
@@ -75,6 +77,23 @@ class HopfieldNetwork:
                 newZ[n][i] = self.activFun(arg)
         self.Z = newZ
 
+    def updateZ(self):
+        newZ = [[]] * self.M
+        for n in range(self.M):
+            newZ[n] = [0] * self.N
+            for i in range(self.N):
+                noise = 0
+                for j in range(self.N):
+                    for m in range(self.M):
+                        if m != n:
+                            noise += self.Z[m][i] * self.Z[m][j] * self.Z[n][i]
+                noise /= self.N
+                if np.abs(noise) < 1:
+                    #doesnt change anything, stop alg?
+                    b = 2
+                else:
+                    newZ[n][i] = self.activFun(self.Z[n][i] + noise)
+        self.Z = newZ
 
     def train(self, inputs, iter):
         self.createPatterns2(inputs)
@@ -82,4 +101,4 @@ class HopfieldNetwork:
         for _ in range(iter):
             self.updateWeights2()
             self.calculateNewZ()
-        
+            #self.updateZ()

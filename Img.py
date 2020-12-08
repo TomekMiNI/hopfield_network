@@ -11,3 +11,4 @@ def vector_to_img(v, height, width, display):
                 pixels[w, h] = (255,255,255)
     if display:
         img.show()
+    return img
