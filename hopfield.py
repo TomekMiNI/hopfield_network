@@ -64,9 +64,9 @@ class HopfieldNetwork:
                     arg += self.w[i][j] * self.Z[n][j]
                 newZ[n][i] = self.activFun(arg)
         if self.Z == newZ:
-            return True
+            return False
         self.Z = newZ
-        return False
+        return True
 
     def calculateNewIndexZ(self):
         change = False
@@ -83,9 +83,7 @@ class HopfieldNetwork:
             if self.Z[k][i] != newZ[k]:
                 change = True
             self.Z[k][i] = newZ[k]
-        if not change:
-            return True
-        return False
+        return change
 
     def calculateRandomZ(self):
         change = False
@@ -102,9 +100,7 @@ class HopfieldNetwork:
             if self.Z[n][k] != newZ[k]:
                 change = True
             self.Z[n][k] = newZ[k]
-        if not change:
-            return True
-        return False
+        return change
         
 
 
@@ -175,10 +171,16 @@ class HopfieldNetwork:
         for _ in range(iter):
             #sign(val) = 1 if val > 0 
             self.updateWeights2()
-            if self.calculateNewZ():
+            #choice of concrete index and change in every pattern
+            #if not self.calculateNewIndexZ():
+            #choice of concrete pattern and change every bit in this pattern
+            #if not self.calculateRandomZ():
+            if not self.calculateNewZ():
                 return
 
             #sign(val) = 1 if val >= 0 
+            #if not self.updateIndexZ():
+            #if not self.updateZ():
             #if not self.updateRandomZ():
             #   print("finish")
             #       return
