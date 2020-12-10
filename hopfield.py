@@ -13,13 +13,7 @@ class HopfieldNetwork:
         for i in range(self.N):
             self.w[i] = [0] * self.N
         
-
-    def corelation(x, y):
-        val = 0
-        for i in range(len(x)):
-            val += x[i] * y[i]
-        return val
-
+    #macukow
     #input-patterns
     def createPatterns(self, inputs):
         #j patterns
@@ -36,24 +30,18 @@ class HopfieldNetwork:
         #j patterns
         self.Z = [[]] * self.M
         for j in range(self.M):
-            rr = range(self.N)
             self.Z[j] = [inputs[j][i] for i in range(self.N)]
 
-    #reguła Hebba 
-    def updateWeights(self):
-        for i in range(self.M):
-            for j in range(self.M):
-                self.w[i, j] = 1/self.N * self.corelation(self.Z[i], self.Z[j])
-
-                
 
     #reguła Hebba 
     def updateWeights2(self):
-        #foreach pattern
-        for m in range(self.M):
-            for i in range(self.N):
-                for j in range(self.N):
-                    self.w[i][j] = 1/self.N * self.Z[m][i] * self.Z[m][j]
+        for i in range(self.N):
+            for j in range(self.N):
+                self.w[i][j] = 0
+                for m in range(self.M):
+                    self.w[i][j] += self.Z[m][i] * self.Z[m][j]
+                self.w[i][j] /= 2
+            
 
 
     def activFun(self, val):
@@ -73,32 +61,124 @@ class HopfieldNetwork:
             for i in range(self.N):
                 arg = 0
                 for j in range(self.N):
-                    arg += self.w[i][j] * self.Z[n][i]
+                    arg += self.w[i][j] * self.Z[n][j]
                 newZ[n][i] = self.activFun(arg)
+        if self.Z == newZ:
+            return True
         self.Z = newZ
+        return False
+
+    def calculateNewIndexZ(self):
+        change = False
+        newZ = [0] * self.M
+        i = np.random.randint(self.N)
+        #foreach pattern
+        for n in range(self.M):
+            #foreach elem in pattern
+            arg = 0
+            for j in range(self.N):
+                arg += self.w[i][j] * self.Z[n][j]
+            newZ[n] = self.activFun(arg)
+        for k in range(self.M):
+            if self.Z[k][i] != newZ[k]:
+                change = True
+            self.Z[k][i] = newZ[k]
+        if not change:
+            return True
+        return False
+
+    def calculateRandomZ(self):
+        change = False
+        newZ = [0] * self.N
+        n = np.random.randint(self.M)
+        #foreach elem in pattern
+        for i in range(self.N):
+            arg = 0
+            #j can be equal i... omit or create newZ
+            for j in range(self.N):
+                arg += self.w[i][j] * self.Z[n][j]
+            newZ[i] = self.activFun(arg)
+        for k in range(self.N):
+            if self.Z[n][k] != newZ[k]:
+                change = True
+            self.Z[n][k] = newZ[k]
+        if not change:
+            return True
+        return False
+        
+
 
     def updateZ(self):
+        change = False
         newZ = [[]] * self.M
         for n in range(self.M):
             newZ[n] = [0] * self.N
             for i in range(self.N):
                 noise = 0
                 for j in range(self.N):
+                    argM = 0
                     for m in range(self.M):
                         if m != n:
-                            noise += self.Z[m][i] * self.Z[m][j] * self.Z[n][i]
+                            argM += self.Z[m][i] * self.Z[m][j] 
+                noise = argM * self.Z[n][j]
                 noise /= self.N
-                if np.abs(noise) < 1:
-                    #doesnt change anything, stop alg?
-                    b = 2
-                else:
+                if np.abs(noise) >= 1:
+                    change = True
                     newZ[n][i] = self.activFun(self.Z[n][i] + noise)
         self.Z = newZ
+        return change
+
+    def updateIndexZ(self):
+        change = False
+        i = np.random.randint(self.N)
+        newZ = [self.Z[p][i] for p in range(self.M)]
+        for n in range(self.M):
+            noise = 0
+            for j in range(self.N):
+                argM = 0
+                for m in range(self.M):
+                    if m != n:
+                        argM += self.Z[m][i] * self.Z[m][j] 
+                noise += argM * self.Z[n][j]
+            noise /= 2
+            if np.abs(noise) >= 1:
+                change = True
+                newZ[n] = self.activFun(self.Z[n][i] + noise)
+        n=0
+        for n in range(self.M):
+            self.Z[n][i] = newZ[n]
+        return change
+
+    def updateRandomZ(self):
+        change = False
+        n = np.random.randint(self.M)
+        newZ = [self.Z[n][i] for i in range(self.N)]
+        for i in range(self.N):
+            noise = 0
+            for j in range(self.N):
+                argM = 0
+                for m in range(self.M):
+                    if m != n:
+                        argM += self.Z[m][i] * self.Z[m][j] 
+                noise += argM * self.Z[n][j]
+            noise /= 2
+            if np.abs(noise) >= 1:
+                change = True
+                newZ[i] = self.activFun(self.Z[n][i] + noise)
+        for k in range(self.N):
+            self.Z[n][k] = newZ[k]
+        return change
 
     def train(self, inputs, iter):
         self.createPatterns2(inputs)
         #while True: #until some eps...
         for _ in range(iter):
+            #sign(val) = 1 if val > 0 
             self.updateWeights2()
-            self.calculateNewZ()
-            #self.updateZ()
+            if self.calculateNewZ():
+                return
+
+            #sign(val) = 1 if val >= 0 
+            #if not self.updateRandomZ():
+            #   print("finish")
+            #       return

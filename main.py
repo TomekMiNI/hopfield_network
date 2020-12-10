@@ -12,7 +12,7 @@ countOfPatterns = 6
 
 hn = HopfieldNetwork(height*width, countOfPatterns)
 
-hn.train(vectors, 5)
+hn.train(vectors, 10)
 
 # Z = hn.Z[0]
 # print(Z)
