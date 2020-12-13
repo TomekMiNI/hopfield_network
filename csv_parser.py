@@ -11,6 +11,8 @@ def read_input(path) -> List[List[int]]:
             for r in range(len(row)):
                 if row[r] == '1':
                     inp[r] = 1
+                else:
+                    inp[r] = -1
             inputs.append(inp)
     return inputs
 

@@ -1,18 +1,18 @@
-import Parser
+import csv_parser
 import Img
 from hopfield import HopfieldNetwork
 import matplotlib as plt
 import matplotlib.pyplot
 
-vectors = Parser.read_input('SN_projekt3/large-25x25.csv')
+vectors = csv_parser.read_input('SN_projekt3/large-25x25.csv')
 width = 25
 height = 25
 
 countOfPatterns = 6
 
-hn = HopfieldNetwork(height*width, countOfPatterns)
+hn = HopfieldNetwork(height*width, countOfPatterns, True, 0.1, 1)
 
-hn.train(vectors, 10)
+hn.train(vectors)
 
 # Z = hn.Z[0]
 # print(Z)
@@ -26,7 +26,7 @@ hn.train(vectors, 10)
 f, axarr = plt.pyplot.subplots(countOfPatterns, 2)
 
 for i in range(countOfPatterns):
-    axarr[i,0].imshow(Img.vector_to_img(vectors[i], height, width, False))
-    axarr[i,1].imshow(Img.vector_to_img(hn.Z[i], height, width, False)) 
+    axarr[i, 0].imshow(Img.vector_to_img(vectors[i], height, width, False))
+    axarr[i, 1].imshow(Img.vector_to_img(hn.Z[i], height, width, False))
 
 plt.pyplot.show()
