@@ -79,12 +79,13 @@ class HopfieldNetwork:
                     arg += self.w[i][j] * self.Z[n][j]
                 newZ[n][i] = self.activFun(arg)
 
-        if self.isNew(newZ):
+        isNewZ = self.isNew(newZ)
+        if isNewZ == 0:
             self.prevZ.append(self.Z)
             self.Z = newZ
-            return True
-
-        return False
+            return isNewZ
+        
+        return isNewZ
 
 
     def updateOjaWeights(self):
@@ -97,10 +98,13 @@ class HopfieldNetwork:
                 self.w[i][j] += self.eta * self.V[j] * (ksii - self.V[j] * self.w[i][j])
 
     def isNew(self, newZ):
+        #0 means continue calculations
+        #1 means stable state
+        #-1 means loop  
         if len(self.prevZ) == 0:
-            return True
+            return 0
 
-        for i in range(len(self.prevZ)):    
+        for i in reversed(range(len(self.prevZ))):    
             isSame = True
             for m in range(self.M):
                 for x in range(self.N):
@@ -111,12 +115,25 @@ class HopfieldNetwork:
                 if not isSame:
                     break
             if isSame:
-                return False
+                #stable
+                if i == len(self.prevZ) - 1:
+                    return 1
+                #loop
+                return -1
 
-        return True
+        return 0
 
     def train(self, inputs):
         self.createPatterns(inputs)
-        energy_decrease = True
-        while energy_decrease:
-            energy_decrease = self.calculateNewZ()
+        result = 0
+        while result == 0:
+            result = self.calculateNewZ()  
+        return result
+
+    def test(self, input):
+        self.M = 1
+        self.Z = [input]
+        result = 0
+        while result == 0:
+            result = self.calculateNewZ() 
+        return result
