@@ -2,10 +2,6 @@ from PIL import Image
 import os
 
 
-im = Image.open('pokemon/persian.png')
-pix = im.load()
-print(im.size[0])
-
 def getSomeBitmaps(count, directory):
     vectors = [[]] * count
     idx = 0

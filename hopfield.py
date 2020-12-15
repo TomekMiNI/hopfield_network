@@ -55,6 +55,7 @@ class HopfieldNetwork:
                 for m in range(self.M):
                     self.w[i][j] += self.Z[m][i] * self.Z[m][j]
                 self.w[i][j] /= self.N
+            print(i)
             
 
 
@@ -80,7 +81,10 @@ class HopfieldNetwork:
 
         isNewZ = self.isNew(newZ)
         if isNewZ == 0:
-            self.prevZ.append(self.Z)
+            if self.N >= 2000:
+                self.prevZ = [self.Z]
+            else:
+                self.prevZ.append(self.Z)
             self.Z = newZ
             return isNewZ
         

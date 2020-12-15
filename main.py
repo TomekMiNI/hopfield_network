@@ -16,14 +16,13 @@ def calculateDiff(v1, v2):
     return diff
 
 #vectors = csv_parser.read_input('SN_projekt3/letter-14x20.csv')
-vectors = PngReader.getSomeBitmaps(1, 'pokemon')
-width = 300
-height = 300
-Img.vector_to_img(vectors[0], height, width, True)
+vectors = PngReader.getSomeBitmaps(1, 'pokemon2')
+width = 100
+height = 100
 
 countOfPatterns = 1
 
-hn = HopfieldNetwork(height*width, countOfPatterns, True, 0.1, 1)
+hn = HopfieldNetwork(height*width, countOfPatterns, False, 0.1, 1)
 
 result = hn.train(vectors)
 print("Result: ", result)
