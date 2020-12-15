@@ -4,6 +4,7 @@ from hopfield import HopfieldNetwork
 import matplotlib as plt
 import matplotlib.pyplot
 import numpy as np
+import PngReader
 
 def calculateDiff(v1, v2):
     diff = 0 
@@ -14,13 +15,15 @@ def calculateDiff(v1, v2):
     diff /= length
     return diff
 
-vectors = csv_parser.read_input('SN_projekt3/OCRA-12x30-cut.csv')
-width = 12
-height = 30
+#vectors = csv_parser.read_input('SN_projekt3/letter-14x20.csv')
+vectors = PngReader.getSomeBitmaps(1, 'pokemon')
+width = 300
+height = 300
+Img.vector_to_img(vectors[0], height, width, True)
 
-countOfPatterns = 7
+countOfPatterns = 1
 
-hn = HopfieldNetwork(height*width, countOfPatterns, False, 0.1, 1)
+hn = HopfieldNetwork(height*width, countOfPatterns, True, 0.1, 1)
 
 result = hn.train(vectors)
 print("Result: ", result)

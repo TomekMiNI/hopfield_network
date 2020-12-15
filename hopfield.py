@@ -119,6 +119,7 @@ class HopfieldNetwork:
                     return 1
                 #loop
                 return -1
+            return 0
 
         return 0
 
