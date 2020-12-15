@@ -52,10 +52,9 @@ class HopfieldNetwork:
         for i in range(self.N):
             for j in range(self.N):
                 self.w[i][j] = 0
-                if i != j:
-                    for m in range(self.M):
-                        self.w[i][j] += self.Z[m][i] * self.Z[m][j]
-                    self.w[i][j] /= self.M
+                for m in range(self.M):
+                    self.w[i][j] += self.Z[m][i] * self.Z[m][j]
+                self.w[i][j] /= self.N
             
 
 
