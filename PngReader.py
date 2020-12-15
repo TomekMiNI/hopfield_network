@@ -17,4 +17,5 @@ def getSomeBitmaps(count, directory):
             for j in range(width):
                 if pix[j, i][0] > 122:
                     vectors[idx][i * width + j] = -1
+        idx += 1
     return vectors

@@ -15,12 +15,13 @@ def calculateDiff(v1, v2):
     diff /= length
     return diff
 
-#vectors = csv_parser.read_input('SN_projekt3/letter-14x20.csv')
-vectors = PngReader.getSomeBitmaps(1, 'pokemon2')
-width = 100
-height = 100
+countOfPatterns = 2
+size = 100
+#vectors = csv_parser.read_input('SN_projekt3/animals-14x9.csv')
+vectors = PngReader.getSomeBitmaps(countOfPatterns, 'pokemon' + str(size))
+width = size
+height = size
 
-countOfPatterns = 1
 
 hn = HopfieldNetwork(height*width, countOfPatterns, False, 0.1, 1)
 
